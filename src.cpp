@@ -1,6 +1,7 @@
 #include <iostream>
+#include <time.h>
 #include <windows.h>
-
+#include <conio.h>
 using namespace std;
 
 void gotoxy(int x, int y) {
@@ -9,6 +10,15 @@ void gotoxy(int x, int y) {
     coord.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
+struct Toado{
+    int x, y;
+    Toado(){
+    }
+    Toado(int a, int b){
+        x = a;
+        y = b;
+    }
+};
 void draw_frame(){
     int row = 27;
     int col = 77;
