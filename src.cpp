@@ -42,12 +42,23 @@ struct Toado {
     }
 };
 
-
+struct Food{
+    Toado position;
+    int age;
+    int mark;
+    Food(){}
+    Food(int x, int y, int _mark){
+        position = Toado(x,y);
+        mark = _mark;
+        age = 10000;
+    }
+};
 struct Snake {
     Toado body[255];
     int length;
     int status;
     int _time = 125;
+    Food food;
     Snake() {
         srand(time(0));
         length = 3;
@@ -55,6 +66,21 @@ struct Snake {
         body[0] = Toado(10, 5);
         body[1] = Toado(11, 5);
         body[2] = Toado(12, 5);
+        generate_food();
+    }
+    void generate_food(){
+        int x = rand() % 75 + 1;
+        int y = rand() % 25 + 1;
+        for(int i = 0; i<length;i++){
+            Toado toado = body[i];
+            if(toado.x == x && toado.y == y){
+                generate_food();
+                return;
+            }
+        }
+        gotoxy(x,y);
+        food = Food(x,y,1);
+        cout<<"#";
     }
     void move() {
         Toado tail = body[0];
