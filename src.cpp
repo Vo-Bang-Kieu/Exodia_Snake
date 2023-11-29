@@ -24,10 +24,12 @@ struct Food{
     Toado position;
     int age;
     int mark;
+    bool isSpecial;
     Food(){}
-    Food(int x, int y, int _mark){
+    Food(int x, int y, int _mark, bool mask){
         position = Toado(x,y);
         mark = _mark;
+        isSpecial = mask;
         age = 10000;
     }
 };
@@ -56,6 +58,7 @@ struct Snake{
     Toado body[255];
     int length;
     int status;
+    int stack;
     Food food;
     int mark;
     int _time = 125;
@@ -63,6 +66,7 @@ struct Snake{
         srand(time(0));
         length = 3;
         status = 0;
+        stack = 0;
         mark = 0;
         body[0] = Toado(10,5);
         body[1] = Toado(11,5);
@@ -80,8 +84,15 @@ struct Snake{
             }
         }
         gotoxy(x,y);
-        food = Food(x,y,1);
-        cout<<"#";
+        if(stack==5){
+            food = Food(x,y,length,1);
+            cout<<"$";
+            stack = 0;
+        }
+        else{
+            food = Food(x,y,1,0);
+            cout<<"#";
+        }
     }
      void move(){
         Toado tail = body[0];
@@ -112,6 +123,20 @@ struct Snake{
                 break;
             default:
                 status = status % 4;
+        }
+        if(food.isSpecial){
+            food.age -= _time;
+            if(food.age<=0){
+                gotoxy(70,29);
+                cout<<"              ";
+                gotoxy(food.position.x,food.position.y);
+                cout<<" ";
+                generate_food();
+            }
+            else{
+                food.mark = length*(food.age/10000.0 + 1);
+                show_specialFoodTime();
+            }
         }
         if(body[length-1].x == food.position.x && body[length-1].y == food.position.y){
             eat();
@@ -176,15 +201,31 @@ struct Snake{
     }
     void show_over(){
         gotoxy(10,10);
-        cout<<"Game over!!! Your score is "<<mark<<endl;
+        cout<<"Game over!!!\n Your score is "<<mark<<endl;
     }
     void show_mark(){
         gotoxy(70,27);
         cout<<"Score: "<<mark;
+        gotoxy(70,28);
+        cout<<"Stack:"<<stack;
+    }
+    void show_specialFoodTime(){
+        gotoxy(70,29);
+        cout<<"Gift:           ";
+        gotoxy(70,29);
+        cout<<"Gift: "<<food.age;
     }
     void eat(){
+        if(food.isSpecial){
+            gotoxy(70,29);
+            cout<<"               ";
+            mark += food.mark;
+            generate_food();
+            return;
+        }
         length++;
         mark += food.mark;
+        stack++;
         generate_food();
     }
     void run(){
